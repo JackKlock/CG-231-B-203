@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>three.js</title>
+		<style>
+			body { margin: 0; }
+		</style>
+	</head>
+	<body>
+		<script type="module">
+			import * as THREE from 'https://unpkg.com/three/build/three.module.js';
+            import { OrbitControls } from 'https://unpkg.com/three@0.126.1/examples/jsm/controls/OrbitControls.js'; //Control para el mouse
+        
+			var scene = new THREE.Scene(); //Escena
+			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 ); //Camara
+
+			var renderer = new THREE.WebGLRenderer(); //Renders
+			renderer.setSize( window.innerWidth, window.innerHeight);
+			document.body.appendChild( renderer.domElement);
+
+
+            var directionalLight = new THREE.DirectionalLight( 0xffffff, 1.5 ); //Luz direccional
+            directionalLight.position.set(2,5,10);
+            scene.add( directionalLight );
+
+            var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 ); //Segunda luz direccional
+            directionalLight.position.set(-2,-5,-10);
+            scene.add( directionalLight );
+
+
+		
+			var tam = [[1,1,1], [0.7,1,1], [0.8,1,1]]; //Tamaño de las figuras
+            var geometria = [];
+
+            geometria.push(new THREE.BoxGeometry(tam[0][0])); //Geometria del cubo
+            geometria.push(new THREE.SphereGeometry(tam[1][0])); //Geometria de la esfera
+            geometria.push(new THREE.ConeGeometry(tam[2][0])); //Geometria del cono
+
+            var color = [{color:0xFF9C3B}, {color:0x00A4C8}, {color:0xFF6CE4}]; //Colores utilizados en el material
+            var material=[new THREE.MeshStandardMaterial(color[0]),new THREE.MeshLambertMaterial(color[1]),new THREE.MeshPhongMaterial(color[2])]; //Materiales utilizando color
+            //MeshMatcapMaterial es un material basico con profundidad pero sin luz
+
+            var figeom =[];
+            for (let i=0; i<3; i++) {
+                figeom.push(new THREE.Mesh(geometria[i], material[i])); //Creacion de figuras
+            }
+
+            for (let i=0; i<3; i++) {
+                scene.add( figeom[i] ); //Agregar cubo
+            }
+
+            figeom[0].position.x = -4; //Posicion de cubo
+            figeom[0].position.y = 0;
+            figeom[0].position.z = 0;
+
+            figeom[1].position.x = 0;
+            figeom[1].position.y = 0;
+            figeom[1].position.z = 0;
+
+            figeom[2].position.x = 4;
+            figeom[2].position.y = 0;
+            figeom[2].position.z = 0;
+            
+            camera.position.x = 0;//derecha(+), izquierda(-)  ↓
+            camera.position.y = 0;//arriba(+), abajo(-)     → posicion camara
+            camera.position.z = 10;//atras(+), adelante(-)     ↑
+
+            var controls = new OrbitControls(camera, renderer.domElement);
+
+			function animate() { //Animacion del cubo, esfera y cono 
+				requestAnimationFrame( animate );
+
+                //Rotacion en z, y, x en cubo, esfera y cono, respectivamente.
+				figeom[0].rotation.z += 0.01;
+
+                figeom[1].rotation.y += 0.01;
+
+                figeom[2].rotation.x += 0.01;
+
+				renderer.render( scene, camera);
+			}
+
+			animate();
+		</script>
+	</body>
+</html>
